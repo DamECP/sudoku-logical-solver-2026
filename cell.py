@@ -5,6 +5,7 @@ class Cell:
         self.row = row
         self.col = col
         self.box = box
+        self.coord = (row, col)
         self.row_peers = None
         self.col_peers = None
         self.box_peers = None
@@ -15,6 +16,11 @@ class Cell:
             self.candidates = set(range(1,10))
         else:
             self.candidates = set()
+    
+    @ property
+    def is_solved(self):
+        return self.value is not None
+    
     
     def __repr__(self):
         candidates = sorted(self.candidates) if self.candidates is not None else "None"

@@ -24,7 +24,7 @@ class Sudoku:
                 self.rows[i].append(c)
                 self.cols[j].append(c)
                 self.boxes[current_box].append(c)
-                self.cells[cell_id] = c
+                self.cells[(i,j)] = c
                 cell_id+=1
 
     def build_peers(self):
@@ -34,6 +34,30 @@ class Sudoku:
             c.box_peers = [i for i in self.boxes[c.box] if i is not c]
             c.peers = set(c.row_peers + c.col_peers + c.box_peers)
 
+    def __repr__(self):
+        data = []
+        def set_value(v):
+            return str(v) if v is not None else "·"
+
+        for rows in range(1,10):
+            row = []
+
+            for cells in range(1,10):
+                current_cell = self.cells[rows,cells]
+                val = set_value(current_cell.value)
+                row.append(val)
+                if cells in (3,6):
+                    row.append("|")
+            
+            data.append(" ".join(row))
+
+            if rows in (3,6):
+                data.append("------|-------|------")   
+        
+
+        data = "\n".join(i for i in data)
+        return data
+
 
 if __name__ == "__main__":
     with open("sudoku_test_1.txt", "r") as s:
@@ -41,3 +65,4 @@ if __name__ == "__main__":
 
     s = Sudoku(s)
     s.build()
+    print(s)
