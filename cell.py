@@ -1,3 +1,5 @@
+from typing import List
+
 class Cell:
     def __init__(self, cell_id, value, row, col, box):
         self.id = cell_id
@@ -6,10 +8,10 @@ class Cell:
         self.col = col
         self.box = box
         self.coord = (row, col)
-        self.row_peers = None
-        self.col_peers = None
-        self.box_peers = None
-        self.peers = None
+        self.row_peers: list[Cell] = None
+        self.col_peers: list[Cell] = None
+        self.box_peers: list[Cell] = None
+        self.peers: list[Cell] = None
 
         #candidates initialisation
         if self.value is None:
@@ -30,6 +32,7 @@ class Cell:
                 f"candidates = {candidates}",
                 f"row = {str(self.row)}",
                 f"column = {str(self.col)}",
+                f"coord = {str(self.coord)}",
                 f"box = {str(self.box)}"]
 
         return "\n".join(i for i in data)
@@ -37,5 +40,4 @@ class Cell:
         
 
 if __name__ == "__main__":
-    test = set()
-    print(bool(test))
+    pass

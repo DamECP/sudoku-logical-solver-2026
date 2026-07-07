@@ -1,12 +1,15 @@
+from typing import List, Dict
 from cell import Cell
 
 class Sudoku:
     def __init__(self, sudoku):
         self.sudoku = sudoku
-        self.rows = {i: [] for i in range(1,10)}
-        self.cols = {i: [] for i in range(1,10)}
-        self.boxes = {i: [] for i in range(1,10)}
-        self.cells = {}
+        self.rows: dict[int:Cell] = {i: [] for i in range(1,10)}
+        self.cols: dict[int:Cell] = {i: [] for i in range(1,10)}
+        self.boxes: dict[int:Cell] = {i: [] for i in range(1,10)}
+        self.dictionary = {}
+        self.cells: list[Cell] = []
+        self.units = [*self.rows.values(), *self.cols.values(), *self.boxes.values()]
 
     def build(self):
         cell_id = 1
@@ -24,16 +27,26 @@ class Sudoku:
                 self.rows[i].append(c)
                 self.cols[j].append(c)
                 self.boxes[current_box].append(c)
-                self.cells[(i,j)] = c
+                self.dictionary[(i,j)] = c
+                self.cells.append(c)
                 cell_id+=1
 
     def build_peers(self):
-        for c in self.cells.values():
+        for c in self.cells:
             c.row_peers = [i for i in self.rows[c.row] if i is not c]
             c.col_peers = [i for i in self.cols[c.col] if i is not c]
             c.box_peers = [i for i in self.boxes[c.box] if i is not c]
             c.peers = set(c.row_peers + c.col_peers + c.box_peers)
 
+    def check_status(self):
+        units = [self.rows, self.cols, self.boxes]
+        for unit in units:
+            for sub_unit in unit.values():
+                cells_values = [cell.value for cell in sub_unit if cell.value is not None]
+                if any(cells_values.count(i)>1 for i in range(1,10)):
+                    raise Exception(f"Incoherence : {cells_values}")
+        return True
+                
     def __repr__(self):
         data = []
         def set_value(v):
@@ -43,7 +56,7 @@ class Sudoku:
             row = []
 
             for cells in range(1,10):
-                current_cell = self.cells[rows,cells]
+                current_cell = self.dictionary[rows,cells]
                 val = set_value(current_cell.value)
                 row.append(val)
                 if cells in (3,6):
