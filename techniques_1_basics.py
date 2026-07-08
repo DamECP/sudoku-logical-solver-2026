@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Dict
 from loader import loader
 from sudoku import Sudoku
 from cell import Cell
+from collections.abc import Iterable
 
 # ---------------- update functions ----------------
 def reduce_candidates(cell:Cell) -> None:
@@ -12,8 +13,32 @@ def update_grid(sudoku:Sudoku) -> None:
     for cell in sudoku.cells:
         reduce_candidates(cell)
 
+def remove_candidates(cells:Cell |Iterable[Cell] , candidates:int |Iterable[int]) -> None:
+    if isinstance(candidates, int):
+        candidates = {candidates}
+    else:
+        candidates = set(candidates)
+
+    changes = False
+
+    if isinstance(cells, Cell):
+        before = cells.candidates.copy()
+        cells.candidates -= candidates
+        if before != cells.candidates:
+            changes = True
+
+    else:
+        for cell in cells:
+            before = cell.candidates.copy()
+            cell.candidates -= candidates
+            if before != cell.candidates:
+                changes = True
+    
+    return changes
+
+
 # ---------------- Helpers ----------------
-def candidates_counter(unit: list[Cell]) -> dict:
+def candidates_counter(unit: list[Cell]) -> dict[int: list[Cell]]:
 
     current_cells = [c for c in unit if c.candidates]
     current_candidates = {
@@ -50,11 +75,40 @@ def hidden_single(sudoku:Sudoku) -> bool:
                 return True
             
     return False
+
+def pointing_candidates(sudoku:Sudoku) -> bool:
+    
+
+    for box_n, box_content in sudoku.boxes.items():
+        unit_candidates = candidates_counter(box_content)
+
+        for candidate in range(1,10):
+    
+            in_rows = {c.row for c in unit_candidates[candidate]}
+            in_cols = {c.col for c in unit_candidates[candidate]}
+
+            if len(in_rows) == 1:
+                row = in_rows.pop()
+                other_cells_from_row = [c for c in sudoku.rows[row] if c.box != box_n and candidate in c.candidates]
+                if len(other_cells_from_row) > 0:
+                    if remove_candidates(other_cells_from_row, candidate):
+                        return True
+            
+            if len(in_cols) == 1:
+                col = in_cols.pop()
+                other_cells_from_col = [c for c in sudoku.cols[col] if c.box != box_n and candidate in c.candidates]
+                if len(other_cells_from_col) > 0:
+                    if remove_candidates(other_cells_from_col, candidate):
+                        return True
+                
+    return False
+
                 
 
 
 if __name__ == "__main__":
     sudoku = loader()
     update_grid(sudoku)
-    hidden_single(sudoku)
-
+    pointing_candidates(sudoku)
+    print()
+    print(sudoku)

@@ -1,0 +1,295 @@
+1. Naked Single (Candidat unique)
+# Une case ne possède plus qu'un seul candidat possible après élimination
+# des chiffres déjà présents dans sa ligne, sa colonne et sa box.
+# Ce candidat devient obligatoirement la valeur de la case.
+
+2. Hidden Single (Unique caché)
+# Dans une unité (ligne, colonne ou box), un chiffre ne peut être placé
+# que dans une seule case, même si cette case possède plusieurs candidats.
+# Tous les autres candidats de cette case sont éliminés et la valeur est fixée.
+
+3. Locked Candidates - Pointing
+# Dans une box, tous les candidats d'un même chiffre sont confinés à une
+# seule ligne ou une seule colonne.
+# Ce chiffre ne peut donc plus apparaître ailleurs sur cette ligne ou cette
+# colonne en dehors de la box.
+
+4. Locked Candidates - Claiming
+# Dans une ligne ou une colonne, tous les candidats d'un même chiffre
+# appartiennent à une seule box.
+# Ce chiffre peut alors être supprimé des autres cases de cette box.
+
+5. Naked Pair
+# Deux cases d'une même unité possèdent exactement les deux mêmes candidats.
+# Ces deux chiffres occupent forcément ces deux cases.
+# Ils sont donc supprimés des candidats des autres cases de l'unité.
+
+6. Hidden Pair
+# Deux chiffres n'apparaissent comme candidats que dans deux cases d'une
+# même unité.
+# Tous les autres candidats présents dans ces deux cases sont supprimés.
+
+7. Naked Triple
+# Trois cases d'une unité contiennent uniquement trois candidats différents,
+# répartis entre elles.
+# Ces trois chiffres étant réservés à ces trois cases, ils sont supprimés
+# des autres cases de l'unité.
+
+8. Hidden Triple
+# Trois chiffres n'apparaissent que dans trois cases d'une unité.
+# Tous les autres candidats de ces trois cases sont supprimés.
+
+9. Naked Quad
+# Quatre cases d'une unité contiennent uniquement quatre candidats distincts.
+# Ces quatre chiffres sont retirés des autres cases de cette unité.
+
+10. Hidden Quad
+# Quatre chiffres ne peuvent apparaître que dans quatre cases d'une unité.
+# Les autres candidats de ces quatre cases sont supprimés.
+
+11. X-Wing
+# Pour un chiffre donné, deux lignes présentent exactement les deux mêmes
+# colonnes candidates (ou inversement).
+# Le chiffre est alors éliminé des autres cases situées sur ces colonnes
+# (ou lignes).
+
+12. Swordfish
+# Extension du X-Wing impliquant trois lignes et trois colonnes.
+# Les candidats du chiffre concerné sont supprimés des autres cases des
+# colonnes ou lignes impliquées.
+
+13. Jellyfish
+# Généralisation du Swordfish utilisant quatre lignes et quatre colonnes.
+
+14. XY-Wing
+# Trois cases reliées par leurs candidats permettent de démontrer qu'un
+# candidat sera toujours présent dans l'une des deux branches.
+# Ce candidat est supprimé des cases voyant simultanément ces deux branches.
+
+15. XYZ-Wing
+# Variante du XY-Wing où la case pivot possède trois candidats.
+# Les éliminations reposent sur le même principe logique.
+
+16. W-Wing
+# Deux cases portant les mêmes deux candidats sont reliées indirectement
+# par une forte contrainte sur un troisième chiffre.
+# Certaines éliminations deviennent alors possibles.
+
+17. Simple Coloring
+# Construction de chaînes de candidats forts/faibles pour un même chiffre.
+# Les contradictions obtenues permettent des suppressions de candidats.
+
+18. Remote Pairs
+# Propagation d'une paire de candidats identiques à travers une chaîne
+# d'unités afin d'éliminer certains candidats.
+
+19. Skyscraper
+# Technique basée sur deux liens forts partageant une orientation commune.
+# Certaines cases voient obligatoirement l'une des deux extrémités et
+# perdent le candidat concerné.
+
+20. Two-String Kite
+# Utilise deux liens forts, un dans une ligne et un dans une colonne,
+# reliés dans une box pour effectuer des éliminations.
+
+21. Empty Rectangle
+# Exploite une configuration particulière d'une box combinée à un lien fort
+# extérieur pour supprimer un candidat.
+
+22. Alternating Inference Chains (AIC)
+# Construction de chaînes alternant liens forts et faibles.
+# Les contradictions ou équivalences obtenues permettent des éliminations
+# ou des placements.
+
+23. XY-Chain
+# Cas particulier d'AIC utilisant uniquement des bivaleurs.
+# Les extrémités de la chaîne permettent d'éliminer un candidat commun.
+
+24. Nice Loops
+# Boucles d'inférences fortes et faibles conduisant à des contradictions
+# logiques et à des suppressions de candidats.
+
+25. Forcing Chains
+# Hypothèse temporaire sur un candidat suivie d'une propagation logique.
+# Si toutes les branches aboutissent à la même conclusion, celle-ci est valide.
+
+26. Trial and Error (Bifurcation)
+# Choix d'un candidat, résolution logique jusqu'à contradiction ou succès,
+# puis retour arrière si nécessaire.
+# Cette méthode n'est plus considérée comme une technique purement logique.
+
+
+
+"""
+1. Naked Single (Single Candidate)
+A cell has only one remaining possible candidate after eliminating
+the numbers already present in its row, column, and box.
+This candidate must therefore be the value of the cell.
+"""
+
+"""
+2. Hidden Single
+Within a unit (row, column, or box), a digit can only be placed
+in a single cell, even if that cell contains multiple candidates.
+All other candidates are removed from this cell and the value is fixed.
+"""
+
+"""
+3. Locked Candidates - Pointing
+Within a box, all candidates of a given digit are confined to a
+single row or a single column.
+That digit can therefore be eliminated from all other cells in that
+row or column outside the box.
+"""
+
+"""
+4. Locked Candidates - Claiming
+Within a row or a column, all candidates of a given digit are restricted
+to a single box.
+That digit can then be removed from the other cells of that box.
+"""
+
+"""
+5. Naked Pair
+Two cells in the same unit contain exactly the same two candidates.
+These two digits must occupy these two cells.
+They can therefore be removed from the candidates of all other cells
+in the unit.
+"""
+
+"""
+6. Hidden Pair
+Two digits appear as candidates in only two cells of the same unit.
+All other candidates in these two cells are removed.
+"""
+
+"""
+7. Naked Triple
+Three cells in a unit contain only three different candidates
+distributed among them.
+Since these three digits are reserved for these three cells, they are
+removed from the other cells of the unit.
+"""
+
+"""
+8. Hidden Triple
+Three digits appear as candidates in only three cells of a unit.
+All other candidates in these three cells are removed.
+"""
+
+"""
+9. Naked Quad
+Four cells in a unit contain only four distinct candidates.
+These four digits are removed from all other cells of that unit.
+"""
+
+"""
+10. Hidden Quad
+Four digits can only appear in four cells of a unit.
+All other candidates in these four cells are removed.
+"""
+
+"""
+11. X-Wing
+For a given digit, two rows contain exactly the same two candidate
+columns (or vice versa).
+The digit can then be eliminated from all other cells located in those
+columns (or rows).
+"""
+
+"""
+12. Swordfish
+An extension of X-Wing involving three rows and three columns.
+The candidates of the digit involved are removed from all other cells
+in the affected columns or rows.
+"""
+
+"""
+13. Jellyfish
+A generalization of Swordfish using four rows and four columns.
+"""
+
+"""
+14. XY-Wing
+Three cells connected through their candidates allow proving that a
+candidate must always exist in one of the two branches.
+This candidate can be removed from cells that see both branches.
+"""
+
+"""
+15. XYZ-Wing
+A variation of XY-Wing where the pivot cell contains three candidates.
+The eliminations rely on the same logical principle.
+"""
+
+"""
+16. W-Wing
+Two cells containing the same pair of candidates are indirectly linked
+through a strong constraint on a third digit.
+This allows certain candidate eliminations.
+"""
+
+"""
+17. Simple Coloring
+Construction of strong/weak candidate chains for a single digit.
+Contradictions obtained from these chains allow candidate eliminations.
+"""
+
+"""
+18. Remote Pairs
+Propagation of an identical candidate pair through a chain of units
+to eliminate certain candidates.
+"""
+
+"""
+19. Skyscraper
+A technique based on two strong links sharing a common orientation.
+Some cells see one of the two endpoints and therefore lose the related
+candidate.
+"""
+
+"""
+20. Two-String Kite
+Uses two strong links, one in a row and one in a column,
+connected through a box to perform candidate eliminations.
+"""
+
+"""
+21. Empty Rectangle
+Uses a specific configuration inside a box combined with an external
+strong link to eliminate a candidate.
+"""
+
+"""
+22. Alternating Inference Chains (AIC)
+Construction of chains alternating between strong and weak links.
+The resulting contradictions or equivalences allow eliminations
+or placements.
+"""
+
+"""
+23. XY-Chain
+A specific case of AIC using only bivalue cells.
+The endpoints of the chain allow elimination of a common candidate.
+"""
+
+"""
+24. Nice Loops
+Strong and weak inference loops leading to logical contradictions
+and candidate eliminations.
+"""
+
+"""
+25. Forcing Chains
+A temporary assumption is made on a candidate followed by logical
+propagation.
+If all branches lead to the same conclusion, that conclusion is valid.
+"""
+
+"""
+26. Trial and Error (Bifurcation)
+A candidate is chosen, then logically solved until reaching either
+a contradiction or a successful resolution.
+Backtracking is performed if necessary.
+This method is no longer considered a purely logical solving technique.
+"""
