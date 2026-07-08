@@ -1,7 +1,6 @@
 from typing import List, Dict
 from loader import loader
-from sudoku import Sudoku
-from cell import Cell
+from classes import * 
 from collections.abc import Iterable
 
 # ---------------- update functions ----------------
@@ -77,7 +76,7 @@ def hidden_single(sudoku:Sudoku) -> bool:
     return False
 
 def pointing_candidates(sudoku:Sudoku) -> bool:
-    
+
 
     for box_n, box_content in sudoku.boxes.items():
         unit_candidates = candidates_counter(box_content)

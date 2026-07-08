@@ -1,4 +1,4 @@
-from sudoku import Sudoku
+from classes import *
 
 PATH = "sudoku_test_1.txt"
 def loader(path=PATH) -> Sudoku:
