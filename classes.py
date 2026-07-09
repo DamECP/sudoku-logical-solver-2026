@@ -30,7 +30,8 @@ class Cell:
                 f"candidates = {candidates}",
                 f"row = {str(self.row)}",
                 f"column = {str(self.col)}",
-                f"box = {str(self.box)}"]
+                f"box = {str(self.box)}",
+                ]
 
         return "\n".join(i for i in data)
 
