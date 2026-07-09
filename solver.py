@@ -5,7 +5,6 @@ sudoku = loader()
 print(sudoku)
 print()
 
-runs = 1
 techniques = [naked_single, hidden_single, pointing_candidates, claiming_candidates]
 progress = True
 

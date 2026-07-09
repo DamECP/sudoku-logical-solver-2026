@@ -1,5 +1,3 @@
-from typing import List, Dict
-
 class Cell:
     def __init__(self, cell_id, value, row, col, box):
         self.id = cell_id
