@@ -1,4 +1,4 @@
-from classes import *
+from sudoku import Sudoku
 from techniques_1_basics import *
 
 sudoku = loader()

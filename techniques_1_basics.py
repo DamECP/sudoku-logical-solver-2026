@@ -1,5 +1,6 @@
 from loader import loader
-from classes import * 
+from sudoku import Sudoku 
+from cell import Cell
 from collections.abc import Iterable
 
 # ---------------- update functions ----------------
