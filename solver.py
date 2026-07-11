@@ -1,3 +1,4 @@
+from loader import loader
 from sudoku import Sudoku
 from techniques_1_basics import *
 

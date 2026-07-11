@@ -1,6 +1,6 @@
-from loader import loader
 from sudoku import Sudoku 
 from cell import Cell
+from unit import Unit
 from collections.abc import Iterable
 
 # ---------------- update functions ----------------
@@ -37,15 +37,6 @@ def remove_candidates(cells:Cell |Iterable[Cell] , candidates:int |Iterable[int]
 
 
 # ---------------- Helpers ----------------
-def candidates_counter(unit: list[Cell]) -> dict[int: list[Cell]]:
-
-    current_cells = [c for c in unit if c.candidates]
-    current_candidates = {
-        i:[cell for cell in current_cells if i in cell.candidates]
-        for i in range(1,10)
-    }
-
-    return current_candidates
 
 
 # ---------------- Techniques ----------------
@@ -70,10 +61,8 @@ def hidden_single(sudoku:Sudoku) -> bool:
     All other candidates are removed from this cell and the value is fixed."""
 
     for unit in sudoku.units:
-        
-        current_candidates = candidates_counter(unit)
             
-        for candidate, candidate_count in current_candidates.items():
+        for candidate, candidate_count in unit.candidates_counter.items():
             if len(candidate_count) == 1:
                 cell = candidate_count[0]
 
@@ -91,13 +80,12 @@ def pointing_candidates(sudoku:Sudoku) -> bool:
     That digit can therefore be eliminated from all other cells in that
     row or column outside the box."""
 
-    for box_n, box_content in sudoku.boxes.items():
-        unit_candidates = candidates_counter(box_content)
+    for box_n, box in sudoku.boxes.items():
 
         for candidate in range(1,10):
     
-            in_rows = {c.row for c in unit_candidates[candidate]}
-            in_cols = {c.col for c in unit_candidates[candidate]}
+            in_rows = {c.row for c in box.candidates_counter[candidate]}
+            in_cols = {c.col for c in box.candidates_counter[candidate]}
 
             if len(in_rows) == 1:
                 row = in_rows.pop()
@@ -148,6 +136,8 @@ def claiming_candidates(sudoku:Sudoku) -> bool:
 
 
 if __name__ == "__main__":
+    from loader import loader
+
     sudoku = loader()
     update_grid(sudoku)
     pointing_candidates(sudoku)

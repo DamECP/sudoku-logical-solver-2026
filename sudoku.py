@@ -1,11 +1,12 @@
 from cell import Cell
+from unit import Unit
 
 class Sudoku:
     def __init__(self, sudoku):
         self.sudoku = sudoku
-        self.rows: dict[int, list[Cell]] = {i: [] for i in range(1,10)}
-        self.cols: dict[int: list[Cell]] = {i: [] for i in range(1,10)}
-        self.boxes: dict[int: list[Cell]] = {i: [] for i in range(1,10)}
+        self.rows: dict[int, list[Cell]] = {i: Unit("row", i, []) for i in range(1,10)}
+        self.cols: dict[int: list[Cell]] = {i: Unit("col", i , []) for i in range(1,10)}
+        self.boxes: dict[int: list[Cell]] = {i: Unit("box", i, []) for i in range(1,10)}
         self.dictionary = {}
         self.cells: list[Cell] = []
         self.units = [*self.rows.values(), *self.cols.values(), *self.boxes.values()]
@@ -23,18 +24,20 @@ class Sudoku:
                     
                 c = Cell(cell_id, value, i, j, current_box)
 
-                self.rows[i].append(c)
-                self.cols[j].append(c)
-                self.boxes[current_box].append(c)
+                self.rows[i].cells.append(c)
+                self.cols[j].cells.append(c)
+                self.boxes[current_box].cells.append(c)
                 self.dictionary[(i,j)] = c
                 self.cells.append(c)
                 cell_id+=1
+            
+            
 
     def build_peers(self) -> None:
         for c in self.cells:
-            c.row_peers = [i for i in self.rows[c.row] if i is not c]
-            c.col_peers = [i for i in self.cols[c.col] if i is not c]
-            c.box_peers = [i for i in self.boxes[c.box] if i is not c]
+            c.row_peers = [i for i in self.rows[c.row].cells if i is not c]
+            c.col_peers = [i for i in self.cols[c.col].cells if i is not c]
+            c.box_peers = [i for i in self.boxes[c.box].cells if i is not c]
             c.peers = set(c.row_peers + c.col_peers + c.box_peers)
 
     def check_status(self) -> bool:
@@ -71,4 +74,6 @@ class Sudoku:
         return data        
 
 if __name__ == "__main__":
-    pass
+    from loader import loader
+
+    sudoku = loader()
