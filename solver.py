@@ -17,8 +17,7 @@ while progress:
     for technique in techniques:
         
         if technique(sudoku):
-            update_grid(sudoku)
-            sudoku.check_status()
+            sudoku.refresh()
             
             progress = True
             break

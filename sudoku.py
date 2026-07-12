@@ -41,13 +41,23 @@ class Sudoku:
             c.peers = set(c.row_peers + c.col_peers + c.box_peers)
 
     def check_status(self) -> bool:
-        units = [self.rows, self.cols, self.boxes]
-        for unit in units:
-            for sub_unit in unit.values():
-                cells_values = [cell.value for cell in sub_unit if cell.value is not None]
-                if any(cells_values.count(i)>1 for i in range(1,10)):
-                    raise Exception(f"Incoherence : {cells_values}")
+        
+        for unit in self.units:
+            if not unit.check():
+                raise Exception(f"Incoherence : {unit}")
+
         return True
+    
+
+    def update_candidates(self) -> None:
+        for cell in self.cells:
+            cell.reduce_candidates()
+
+
+    def refresh(self) -> None:
+        self.update_candidates()
+        self.check_status()
+    
                 
     def __repr__(self):
         data = []
@@ -77,3 +87,4 @@ if __name__ == "__main__":
     from loader import loader
 
     sudoku = loader()
+    sudoku.check_status()

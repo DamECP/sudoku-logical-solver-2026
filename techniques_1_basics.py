@@ -3,41 +3,6 @@ from cell import Cell
 from unit import Unit
 from collections.abc import Iterable
 
-# ---------------- update functions ----------------
-def reduce_candidates(cell:Cell) -> None:
-    peers_values = {peer.value for peer in cell.peers if peer.is_solved}
-    cell.candidates -= peers_values
-
-def update_grid(sudoku:Sudoku) -> None:
-    for cell in sudoku.cells:
-        reduce_candidates(cell)
-
-def remove_candidates(cells:Cell |Iterable[Cell] , candidates:int |Iterable[int]) -> None:
-    if isinstance(candidates, int):
-        candidates = {candidates}
-    else:
-        candidates = set(candidates)
-
-    changes = False
-
-    if isinstance(cells, Cell):
-        before = cells.candidates.copy()
-        cells.candidates -= candidates
-        if before != cells.candidates:
-            changes = True
-
-    else:
-        for cell in cells:
-            before = cell.candidates.copy()
-            cell.candidates -= candidates
-            if before != cell.candidates:
-                changes = True
-    
-    return changes
-
-
-# ---------------- Helpers ----------------
-
 
 # ---------------- Techniques ----------------
 def naked_single(sudoku:Sudoku):
@@ -48,9 +13,10 @@ def naked_single(sudoku:Sudoku):
     
     for cell in sudoku.cells:
         if not cell.is_solved:
-            reduce_candidates(cell)
+            cell.reduce_candidates()
+
             if len(cell.candidates) == 1:
-                cell.value = cell.candidates.pop()
+                cell.solve(cell.candidates.pop())
                 return True
     return False
 
@@ -61,17 +27,16 @@ def hidden_single(sudoku:Sudoku) -> bool:
     All other candidates are removed from this cell and the value is fixed."""
 
     for unit in sudoku.units:
-            
-        for candidate, candidate_count in unit.candidates_counter.items():
-            if len(candidate_count) == 1:
-                cell = candidate_count[0]
 
-                cell.value = candidate
-                cell.candidates.clear()
+        for i in range(1,10):
+            cells_with_candidate = unit.unit_candidates("unit",i)
+            if len(cells_with_candidate) == 1:
+                cells_with_candidate[0].solve(i)
 
                 return True
             
     return False
+
 
 def pointing_candidates(sudoku:Sudoku) -> bool:
     
@@ -80,28 +45,34 @@ def pointing_candidates(sudoku:Sudoku) -> bool:
     That digit can therefore be eliminated from all other cells in that
     row or column outside the box."""
 
-    for box_n, box in sudoku.boxes.items():
+    changes = False
+
+    for box in sudoku.boxes.values():
 
         for candidate in range(1,10):
-    
-            in_rows = {c.row for c in box.candidates_counter[candidate]}
-            in_cols = {c.col for c in box.candidates_counter[candidate]}
+            if candidate in box:
+                continue
+            
+            in_rows = set(box.unit_candidates("row", candidate))
+            in_cols = set(box.unit_candidates("col", candidate))
 
             if len(in_rows) == 1:
-                row = in_rows.pop()
-                other_cells_from_row = [c for c in sudoku.rows[row] if c.box != box_n and candidate in c.candidates]
-                if len(other_cells_from_row) > 0:
-                    if remove_candidates(other_cells_from_row, candidate):
-                        return True
+                row_to_clean = in_rows.pop()
+                for c in sudoku.rows[row_to_clean]:
+                    if c.box != box.unit_id:
+                        if c.remove_candidates(candidate):
+                            changes = True
             
             if len(in_cols) == 1:
-                col = in_cols.pop()
-                other_cells_from_col = [c for c in sudoku.cols[col] if c.box != box_n and candidate in c.candidates]
-                if len(other_cells_from_col) > 0:
-                    if remove_candidates(other_cells_from_col, candidate):
-                        return True
-                
-    return False
+                col_to_clean = in_cols.pop()
+
+                for c in sudoku.cols[col_to_clean]:
+                    if c.box != box.unit_id:
+                        if c.remove_candidates(candidate):
+                            changes = True
+
+    return changes
+
 
 def claiming_candidates(sudoku:Sudoku) -> bool:
     
@@ -109,27 +80,16 @@ def claiming_candidates(sudoku:Sudoku) -> bool:
     to a single box.
     That digit can then be removed from the other cells of that box."""
     
-    units = [sudoku.rows, sudoku.cols]
+    for unit in sudoku.units:
 
-    for unit in units:
+        if not unit.is_line:
+            continue
 
-        for cells in unit.values():
+        for candidate in range(1,10):
 
-            for candidate in range(1,10):
+            pass
 
-                boxes = {c.box for c in cells if candidate in c.candidates}
-
-                if len(boxes) == 1:
-
-                    current_box = boxes.pop()
-
-                    for cell in sudoku.boxes[current_box]:
-
-                        if cell not in cells and candidate in cell.candidates:
-                            
-                            remove_candidates(cell, candidate)
-                            return True
-
+    
     return False
 
                 
@@ -139,8 +99,7 @@ if __name__ == "__main__":
     from loader import loader
 
     sudoku = loader()
-    update_grid(sudoku)
+    sudoku.refresh()
     pointing_candidates(sudoku)
-    claiming_candidates(sudoku)
     #print()
     #print(sudoku)
