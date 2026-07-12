@@ -27,14 +27,17 @@ class Unit:
     def candidates(self) -> list[set[int]]:
         return [cell.candidates for cell in self.cells]
 
-    def unit_candidates(self, unit_type:str, candidate:int) -> list[Cell]:
-        if unit_type == "unit":
-            return [cell for cell in self.cells if candidate in cell.candidates]
-        elif unit_type == "row":
-            return [c.row for c in self.cells if candidate in c.candidates]    
-        elif unit_type == "col":
-            return [c.col for c in self.cells if candidate in c.candidates]
+    def get_cells_with_candidates(self, candidate:int) -> list[Cell]:
+        return [cell for cell in self.cells if candidate in cell.candidates]
     
+    def candidate_in(self, unit_type:str, candidate:int) -> set[int]:
+         if unit_type == "rows":
+              return set([c.row for c in self.cells if candidate in c.candidates])
+         if unit_type == "cols":
+              return set([c.col for c in self.cells if candidate in c.candidates])
+         if unit_type == "boxes":
+              return set([c.box for c in self.cells if candidate in c.candidates])
+        
     def count_candidates(self) -> dict[int: list[Cell]]:
         cells = [c for c in self.cells if c.candidates]
         return {i: [c for c in cells if i in c.candidates] for i in range(1,10)}
@@ -43,17 +46,15 @@ class Unit:
 # ---------------- indexing ----------------
     
     @property
-    def concerned_rows(self, candidate) -> set[int]:
-        return set([c.row for c in self.cells])
-    
-    @property
-    def concerned_cols(self) -> set[int]:
-        return set([c.col for c in self.cells])
-    
-    @property
-    def concerned_boxes(self) -> set[int]:
-        return set([c.box for c in self.cells])
+    def get_concerned_units(self) -> dict:
+            concerned_rows = set([c.row for c in self.cells])
+            concerned_cols = set([c.col for c in self.cells])
+            concerned_boxes = set([c.box for c in self.cells])
 
+            return {"rows": concerned_rows,
+                    "cols": concerned_cols,
+                    "boxes": concerned_boxes
+                    }
     
 # ---------------- status ----------------
 

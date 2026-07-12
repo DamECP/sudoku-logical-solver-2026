@@ -17,6 +17,7 @@ while progress:
     for technique in techniques:
         
         if technique(sudoku):
+            print(technique.__name__)
             sudoku.refresh()
             
             progress = True

@@ -29,7 +29,7 @@ def hidden_single(sudoku:Sudoku) -> bool:
     for unit in sudoku.units:
 
         for i in range(1,10):
-            cells_with_candidate = unit.unit_candidates("unit",i)
+            cells_with_candidate = unit.get_cells_with_candidates(i)
             if len(cells_with_candidate) == 1:
                 cells_with_candidate[0].solve(i)
 
@@ -45,33 +45,28 @@ def pointing_candidates(sudoku:Sudoku) -> bool:
     That digit can therefore be eliminated from all other cells in that
     row or column outside the box."""
 
-    changes = False
-
-    for box in sudoku.boxes.values():
+    
+    for box_id, box in sudoku.boxes.items():
 
         for candidate in range(1,10):
-            if candidate in box:
+            if candidate in box.values:
                 continue
             
-            in_rows = set(box.unit_candidates("row", candidate))
-            in_cols = set(box.unit_candidates("col", candidate))
+            for attr in ("rows", "cols"):
 
-            if len(in_rows) == 1:
-                row_to_clean = in_rows.pop()
-                for c in sudoku.rows[row_to_clean]:
-                    if c.box != box.unit_id:
-                        if c.remove_candidates(candidate):
-                            changes = True
-            
-            if len(in_cols) == 1:
-                col_to_clean = in_cols.pop()
+                concerned_rows_cols= box.candidate_in(attr, candidate)
 
-                for c in sudoku.cols[col_to_clean]:
-                    if c.box != box.unit_id:
-                        if c.remove_candidates(candidate):
-                            changes = True
+                if len(concerned_rows_cols) != 1:
+                    continue
 
-    return changes
+                unit_to_check = concerned_rows_cols.pop()
+
+                for cell in getattr(sudoku, attr)[unit_to_check]:
+                    if cell.box == box_id:
+                        continue
+
+                    if cell.remove_candidates(candidate):
+                        return True
 
 
 def claiming_candidates(sudoku:Sudoku) -> bool:
@@ -87,7 +82,15 @@ def claiming_candidates(sudoku:Sudoku) -> bool:
 
         for candidate in range(1,10):
 
-            pass
+            in_boxes = unit.candidate_in("boxes", candidate)
+
+            if len(in_boxes) == 1:
+                box_id = in_boxes.pop()
+
+                for cell in sudoku.boxes[box_id]:
+                    if getattr(cell, unit.unit_type) != unit.unit_id:
+                        if cell.remove_candidates(candidate):
+                            return True
 
     
     return False
@@ -100,6 +103,6 @@ if __name__ == "__main__":
 
     sudoku = loader()
     sudoku.refresh()
-    pointing_candidates(sudoku)
+    claiming_candidates(sudoku)
     #print()
     #print(sudoku)
