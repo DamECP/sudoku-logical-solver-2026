@@ -94,7 +94,7 @@ def claiming_candidates(sudoku:Sudoku) -> bool:
     return False
 
                 
-def naked_subset(sudoku: Sudoku):
+def naked_subset(sudoku: Sudoku) -> bool:
 
     "Two/three/fours cells in the same unit contain exactly the same two/three/four candidates"
     "These digits must occupy these cells"
@@ -103,32 +103,62 @@ def naked_subset(sudoku: Sudoku):
     for size in range(2,5): #naked pair, triple and quadruple
 
         for unit in sudoku.units:
+            
+            #filter out empty sets and too long candidates lists to lighten the combination process
+            comparable_cells = [cell for cell in unit 
+                                if 1 < len(cell.candidates) <= size] 
 
-            comparable_cells = [cell for cell in unit if len(cell.candidates) <= size] #filter out too long candidates lists to lighten the combination process
+            for comb in combinations(comparable_cells, size):
 
-            combs = combinations(comparable_cells, size)
+                candidates = set().union(
+                    *(cell.candidates for cell in comb)) #flatten the candidates
 
-            for comb in combs:
-                cells = [c for c in comb if c.candidates] #filter out empty sets to avoid length problems
-                candidates = set().union(*(c.candidates for c in comb if c.candidates)) #flatten the candidates
-
-                if len(candidates) != size or len(cells) != size:
+                if len(candidates) != size: #not a naked subset
                     continue
 
-                for unit_cell in unit:
-                    if unit_cell in cells:
-                        continue
-                    for candidate in candidates:
-                        if unit_cell.remove_candidates(candidate):
-                            return True
+                for unit_cell in unit.get_cells(excluded=comb):
+                    if unit_cell.remove_candidates(candidates):
+                        return True
     
     return False
+
+
+def hidden_subset(sudoku: Sudoku) -> bool:
+
+    for size in range(2,5):
+
+        for unit in sudoku.units:
+
+                comparable_cells = [cell for cell in unit if cell.candidates]
+                candidates = set().union(*(unit.candidates))
+
+                for comb in combinations(candidates, size):
+                        
+                        comb = set(comb)
+                        cells_with_cand = [c for c in comparable_cells 
+                                        if any(cand in comb 
+                                        for cand in c.candidates)]
+
+                        
+                        if len(cells_with_cand) != size:
+                            continue
+                        
+                        for c in cells_with_cand:
+                            to_be_eliminated = set(c.candidates) - comb
+                            if c.remove_candidates(to_be_eliminated):
+                                return True
+
+    return False
+
+
+
+
 
 if __name__ == "__main__":
     from loader import loader
 
     sudoku = loader()
     sudoku.refresh()
-    naked_subset(sudoku)
+    print(hidden_subset(sudoku))
     #print()
     #print(sudoku)

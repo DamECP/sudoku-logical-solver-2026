@@ -6,7 +6,7 @@ sudoku = loader()
 print(sudoku)
 print()
 
-techniques = [naked_single, hidden_single, pointing_candidates, claiming_candidates, naked_subset]
+techniques = [naked_single, hidden_single, pointing_candidates, claiming_candidates, naked_subset, hidden_subset]
 progress = True
 
 
