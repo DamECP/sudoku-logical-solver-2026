@@ -6,7 +6,7 @@ sudoku = loader()
 print(sudoku)
 print()
 
-techniques = [naked_single, hidden_single, pointing_candidates, claiming_candidates]
+techniques = [naked_single, hidden_single, pointing_candidates, claiming_candidates, naked_subset]
 progress = True
 
 
@@ -15,9 +15,10 @@ while progress:
     
     sudoku.check_status()
     for technique in techniques:
+        print (technique.__name__)
         
         if technique(sudoku):
-            print(technique.__name__)
+            print("_________________", technique.__name__, "_________________")
             sudoku.refresh()
             
             progress = True

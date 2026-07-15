@@ -2,7 +2,7 @@ from sudoku import Sudoku
 from cell import Cell
 from unit import Unit
 from collections.abc import Iterable
-
+from itertools import combinations
 
 # ---------------- Techniques ----------------
 def naked_single(sudoku:Sudoku):
@@ -19,6 +19,7 @@ def naked_single(sudoku:Sudoku):
                 cell.solve(cell.candidates.pop())
                 return True
     return False
+
 
 def hidden_single(sudoku:Sudoku) -> bool:
     
@@ -45,7 +46,6 @@ def pointing_candidates(sudoku:Sudoku) -> bool:
     That digit can therefore be eliminated from all other cells in that
     row or column outside the box."""
 
-    
     for box_id, box in sudoku.boxes.items():
 
         for candidate in range(1,10):
@@ -72,8 +72,7 @@ def pointing_candidates(sudoku:Sudoku) -> bool:
 def claiming_candidates(sudoku:Sudoku) -> bool:
     
     """Within a row or a column, all candidates of a given digit are restricted
-    to a single box.
-    That digit can then be removed from the other cells of that box."""
+    to a single box. That digit can then be removed from the other cells of that box."""
     
     for unit in sudoku.units:
 
@@ -92,17 +91,44 @@ def claiming_candidates(sudoku:Sudoku) -> bool:
                         if cell.remove_candidates(candidate):
                             return True
 
-    
     return False
 
                 
+def naked_subset(sudoku: Sudoku):
 
+    "Two/three/fours cells in the same unit contain exactly the same two/three/four candidates"
+    "These digits must occupy these cells"
+    "They can be removed from the other cell's candidate inside the unit"
+
+    for size in range(2,5): #naked pair, triple and quadruple
+
+        for unit in sudoku.units:
+
+            comparable_cells = [cell for cell in unit if len(cell.candidates) <= size] #filter out too long candidates lists to lighten the combination process
+
+            combs = combinations(comparable_cells, size)
+
+            for comb in combs:
+                cells = [c for c in comb if c.candidates] #filter out empty sets to avoid length problems
+                candidates = set().union(*(c.candidates for c in comb if c.candidates)) #flatten the candidates
+
+                if len(candidates) != size or len(cells) != size:
+                    continue
+
+                for unit_cell in unit:
+                    if unit_cell in cells:
+                        continue
+                    for candidate in candidates:
+                        if unit_cell.remove_candidates(candidate):
+                            return True
+    
+    return False
 
 if __name__ == "__main__":
     from loader import loader
 
     sudoku = loader()
     sudoku.refresh()
-    claiming_candidates(sudoku)
+    naked_subset(sudoku)
     #print()
     #print(sudoku)
