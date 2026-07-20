@@ -28,6 +28,7 @@ class Unit:
         return [cell.candidates for cell in self.cells]
     
     def get_cells(self, excluded=None):
+         # same as candidate property but may exclude specific cells
          if excluded is None:
               return self.cells
          
@@ -46,6 +47,14 @@ class Unit:
               return set([c.col for c in self.cells if candidate in c.candidates])
          if unit_type == "boxes":
               return set([c.box for c in self.cells if candidate in c.candidates])
+         
+    def candidates_counter(self)->dict[int:int]:
+         return {i:len([c for c in self.cells if i in c.candidates]) for i in range(1,10)}
+    
+    def get_candidate_cells(self, candidate:int)->list[Cell]:
+         return [cell for cell in self.cells if candidate in cell.candidates]
+         
+         
 
 
 # ---------------- indexing ----------------
@@ -88,4 +97,4 @@ if __name__ == "__main__":
 
     sudoku = loader()
     unit = Unit("row", 1, sudoku.rows[1])
-    print(unit)
+    print(unit.candidates_counter())

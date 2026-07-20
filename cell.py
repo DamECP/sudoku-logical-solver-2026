@@ -2,7 +2,7 @@ from collections.abc import Iterable
 
 class Cell:
     def __init__(self, cell_id, value, row, col, box):
-        self.id = cell_id
+        self.cell_id = cell_id
         self.value = value
         self.row = row
         self.col = col
@@ -11,6 +11,7 @@ class Cell:
         self.col_peers = None
         self.box_peers = None
         self.peers = None
+        self.coords = (row, col)
 
         #candidates initialisation
         if self.value is None:
@@ -43,11 +44,10 @@ class Cell:
         self.candidates -= candidates
         return before != self.candidates
 
-
     def __repr__(self):
         candidates = sorted(self.candidates) if self.candidates is not None else "None"
 
-        data = [f"id = {str(self.id)}",
+        data = [f"id = {str(self.cell_id)}",
                 f"value = {str(self.value)}",
                 f"candidates = {candidates}",
                 f"row = {str(self.row)}",

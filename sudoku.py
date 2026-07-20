@@ -57,6 +57,9 @@ class Sudoku:
     def refresh(self) -> None:
         self.update_candidates()
         self.check_status()
+
+    def get_cell(self, x, y) -> Cell:
+        return self.dictionary[(x,y)]
     
                 
     def __repr__(self):

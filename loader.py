@@ -1,6 +1,6 @@
 from sudoku import Sudoku
 
-PATH = "test_hard.txt"
+PATH = "test_xwing.txt"
 def loader(path=PATH) -> Sudoku:
     with open(path, "r") as s:
         s = [i.strip() for i in s.readlines()][0:10] # tests individuels
