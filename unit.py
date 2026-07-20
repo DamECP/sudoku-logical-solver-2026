@@ -77,7 +77,7 @@ class Unit:
         return self.unit_type in ("row", "col")
 
     @property
-    def is_finished(self) -> bool:
+    def is_solved(self) -> bool:
         if len(self.values) != 9:
             return False
         

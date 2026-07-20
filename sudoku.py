@@ -61,6 +61,10 @@ class Sudoku:
     def get_cell(self, x, y) -> Cell:
         return self.dictionary[(x,y)]
     
+    @property
+    def is_solved(self):
+        return all(unit.is_solved for unit in self.units)
+    
                 
     def __repr__(self):
         data = []
