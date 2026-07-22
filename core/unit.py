@@ -1,4 +1,4 @@
-from cell import Cell
+from .cell import Cell
 
 class Unit:
     def __init__(self, unit_type:str, unit_id:int, cells: list[Cell]):
@@ -48,7 +48,7 @@ class Unit:
          if unit_type == "boxes":
               return set([c.box for c in self.cells if candidate in c.candidates])
          
-    def candidates_counter(self)->dict[int:int]:
+    def candidates_counter(self)->dict[int, int]:
          return {i:len([c for c in self.cells if i in c.candidates]) for i in range(1,10)}
     
     def get_candidate_cells(self, candidate:int)->list[Cell]:
@@ -60,7 +60,7 @@ class Unit:
 # ---------------- indexing ----------------
     
     @property
-    def get_concerned_units(self) -> dict:
+    def concerned_units(self) -> dict:
             concerned_rows = set([c.row for c in self.cells])
             concerned_cols = set([c.col for c in self.cells])
             concerned_boxes = set([c.box for c in self.cells])
@@ -90,11 +90,3 @@ class Unit:
         values = self.values
         return len(values) == len(set(values))
 
-
-
-if __name__ == "__main__":
-    from loader import loader
-
-    sudoku = loader()
-    unit = Unit("row", 1, sudoku.rows[1])
-    print(unit.candidates_counter())

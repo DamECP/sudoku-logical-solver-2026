@@ -1,12 +1,12 @@
-from cell import Cell
-from unit import Unit
+from .cell import Cell
+from .unit import Unit
 
 class Sudoku:
-    def __init__(self, sudoku):
-        self.sudoku = sudoku
-        self.rows: dict[int, list[Cell]] = {i: Unit("row", i, []) for i in range(1,10)}
-        self.cols: dict[int: list[Cell]] = {i: Unit("col", i , []) for i in range(1,10)}
-        self.boxes: dict[int: list[Cell]] = {i: Unit("box", i, []) for i in range(1,10)}
+    def __init__(self, grid):
+        self.sudoku = grid
+        self.rows: dict[int, Unit] = {i: Unit("row", i, []) for i in range(1,10)}
+        self.cols: dict[int, Unit] = {i: Unit("col", i , []) for i in range(1,10)}
+        self.boxes: dict[int, Unit] = {i: Unit("box", i, []) for i in range(1,10)}
         self.dictionary = {}
         self.cells: list[Cell] = []
         self.units = [*self.rows.values(), *self.cols.values(), *self.boxes.values()]
@@ -89,9 +89,3 @@ class Sudoku:
 
         data = "\n".join(i for i in data)
         return data        
-
-if __name__ == "__main__":
-    from loader import loader
-
-    sudoku = loader()
-    sudoku.check_status()
